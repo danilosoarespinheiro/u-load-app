@@ -14,15 +14,11 @@ class DetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        val intent = intent
-        val fileName = intent.getStringExtra("FILE")
-        val status = intent.getStringExtra("STATUS")
-
-        binding.contentDetail.fileNameTextView.text = "File: ${fileName}"
-        binding.contentDetail.statusTextView.text = "Status: ${status}"
-
-        binding.contentDetail.detailLayout.transitionToEnd()
-
-        binding.contentDetail.backButton.setOnClickListener { finish() }
+        binding.contentDetail.apply {
+            fileNameTextView.text = getString(R.string.file_resource, intent.getStringExtra(FILE))
+            statusTextView.text = getString(R.string.status_resource, intent.getStringExtra(STATUS))
+            detailLayout.transitionToEnd()
+            backButton.setOnClickListener { finish() }
+        }
     }
 }

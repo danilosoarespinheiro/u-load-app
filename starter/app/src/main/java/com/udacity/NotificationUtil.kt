@@ -12,8 +12,8 @@ private const val NOTIFICATION_ID = 1
 fun NotificationManager.sendNotification(body: String, applicationContext: Context) {
 
     val intent = Intent(applicationContext, DetailActivity::class.java)
-    intent.putExtra("FILE", body)
-    intent.putExtra("STATUS", applicationContext.getString(R.string.download_complete))
+    intent.putExtra(FILE, body)
+    intent.putExtra(STATUS, applicationContext.getString(R.string.download_complete))
 
     val pendingIntent = PendingIntent.getActivity(
         applicationContext,
@@ -27,9 +27,7 @@ fun NotificationManager.sendNotification(body: String, applicationContext: Conte
         R.drawable.ic_assistant_black_24dp
     )
 
-    val bigImg = NotificationCompat.BigPictureStyle()
-        .bigPicture(icoImg)
-        .bigLargeIcon(null)
+    val bigImg = NotificationCompat.BigPictureStyle().bigPicture(icoImg).bigLargeIcon(null)
 
     val builder = NotificationCompat.Builder(
         applicationContext,

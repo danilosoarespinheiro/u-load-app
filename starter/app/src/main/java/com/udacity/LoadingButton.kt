@@ -7,7 +7,7 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.Paint.*
 import android.graphics.RectF
 import android.graphics.Typeface
 import android.util.AttributeSet
@@ -35,21 +35,16 @@ class LoadingButton @JvmOverloads constructor(
     private var btnColor = 0
     private var btnTxtColor = 0
 
-    private var btnTxt = "Donwload"
+    private var btnTxt = DOWNLOAD_LABEL
 
     // To check if the download started or not
     private var download = false
 
-    private var circle = RectF(
-        0f,
-        0f,
-        0f,
-        0f
-    )
+    private var circle = RectF(0f, 0f, 0f, 0f)
 
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.FILL
-        textAlign = Paint.Align.CENTER
+    private val paint = Paint(ANTI_ALIAS_FLAG).apply {
+        style = Style.FILL
+        textAlign = Align.CENTER
         textSize = 60f
         typeface = Typeface.create("", Typeface.BOLD_ITALIC)
     }
@@ -81,27 +76,17 @@ class LoadingButton @JvmOverloads constructor(
 
 
     init {
-        context.theme.obtainStyledAttributes(
-            attrs,
-            R.styleable.LoadingButton,
-            0, 0
-        ).apply {
+        context.theme.obtainStyledAttributes(attrs, R.styleable.LoadingButton, 0, 0).apply {
 
             try {
                 btnColor = getColor(
                     R.styleable.LoadingButton_buttonBackgroundColor,
-                    ContextCompat.getColor(
-                        context,
-                        R.color.colorPrimary
-                    )
+                    ContextCompat.getColor(context, R.color.colorPrimary)
                 )
 
                 btnTxtColor = getColor(
                     R.styleable.LoadingButton_buttonTextColor,
-                    ContextCompat.getColor(
-                        context,
-                        R.color.white
-                    )
+                    ContextCompat.getColor(context, R.color.white)
                 )
             } finally {
                 recycle()
@@ -118,35 +103,18 @@ class LoadingButton @JvmOverloads constructor(
         super.onDraw(canvas)
 
         paint.color = btnColor
-        canvas?.drawRect(
-            0f,
-            0f,
-            widthSize.toFloat(),
-            heightSize.toFloat(),
-            paint
-        )
+        canvas?.drawRect(0f, 0f, widthSize.toFloat(), heightSize.toFloat(), paint)
 
         if (download) {
             paint.color = resources.getColor(R.color.colorPrimaryDark)
-            canvas?.drawRect(
-                0f,
-                0f,
-                currentWidth.toFloat(),
-                heightSize.toFloat(),
-                paint
-            )
+            canvas?.drawRect(0f, 0f, currentWidth.toFloat(), heightSize.toFloat(), paint)
 
             paint.color = resources.getColor(R.color.colorAccent)
             canvas?.drawArc(circle, -90f, currentDegree.toFloat(), true, paint)
         }
 
         paint.color = btnTxtColor
-        canvas?.drawText(
-            btnTxt,
-            widthSize / 2f,
-            heightSize.toFloat() / 1.70f,
-            paint
-        )
+        canvas?.drawText(btnTxt, widthSize / 2f, heightSize.toFloat() / 1.70f, paint)
     }
 
     override fun onSizeChanged(newWidth: Int, newHeight: Int, oldWidth: Int, oldHeight: Int) {

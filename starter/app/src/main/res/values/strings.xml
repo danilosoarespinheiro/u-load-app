@@ -24,4 +24,8 @@
     <string name="download_started">Download started</string>
     <string name="download">Download</string>
     <string name="back">Back</string>
+    <string name="file">File</string>
+    <string name="status">Status</string>
+    <string name="file_resource">File : %s</string>
+    <string name="status_resource">Status : %s</string>
 </resources>

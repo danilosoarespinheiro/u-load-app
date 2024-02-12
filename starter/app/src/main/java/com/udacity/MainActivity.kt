@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.NotificationManager.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -11,7 +12,7 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
+import android.widget.Toast.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.udacity.databinding.ActivityMainBinding
@@ -19,10 +20,8 @@ import com.udacity.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
     private var URL = ""
     private var downloadID: Long = 0
-
     private lateinit var notificationManager: NotificationManager
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -64,24 +63,24 @@ class MainActivity : AppCompatActivity() {
         notificationManager.cancelAll()
         notificationManager.sendNotification(
             when (URL) {
-                GLIDE -> "Glide"
-                LOADAPP -> "Udacity File"
-                else -> "Retrofit"
+                GLIDE -> GLIDE_LABEL
+                LOAD_APP -> LOAD_APP_LABEL
+                else -> RETROFIT_LABEL
             }, this
         )
     }
 
     private fun downloadFromSource(): String? {
         return when (binding.contentMain.group.checkedRadioButtonId) {
+
             binding.contentMain.glide.id -> GLIDE
 
-            binding.contentMain.c3.id -> LOADAPP
+            binding.contentMain.c3.id -> LOAD_APP
 
             binding.contentMain.retrofit.id -> RETROFIT
 
             else -> {
-                Toast.makeText(this, getString(R.string.please_select_file), Toast.LENGTH_SHORT)
-                    .show()
+                makeText(this, getString(R.string.please_select_file), LENGTH_SHORT).show()
                 null
             }
         }
@@ -99,17 +98,12 @@ class MainActivity : AppCompatActivity() {
                 .setAllowedOverRoaming(true)
 
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-
         downloadID = downloadManager.enqueue(request)
     }
 
     private fun createNotificationChannel(channelID: String, channelName: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                channelID,
-                channelName,
-                NotificationManager.IMPORTANCE_HIGH
-            )
+            val notificationChannel = NotificationChannel(channelID, channelName, IMPORTANCE_HIGH)
             notificationChannel.enableVibration(true)
             notificationChannel.description = getString(R.string.notification_description)
             val notificationManger = this.getSystemService(NotificationManager::class.java)
