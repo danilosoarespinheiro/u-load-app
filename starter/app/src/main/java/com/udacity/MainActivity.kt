@@ -1,51 +1,112 @@
 package com.udacity
 
 import android.app.DownloadManager
+import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.udacity.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        private const val LOADAPP =
+            "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter"
+        private const val GLIDE =
+            "https://github.com/bumptech/glide"
+        private const val RETROFIT =
+            "https://github.com/square/retrofit"
+    }
+
     private lateinit var binding: ActivityMainBinding
+
+    private var URL = ""
 
     private var downloadID: Long = 0
 
     private lateinit var notificationManager: NotificationManager
-    private lateinit var pendingIntent: PendingIntent
-    private lateinit var action: NotificationCompat.Action
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
-        // TODO: Implement code below
-//        binding.custom_button.setOnClickListener {
-//            download()
-//        }
+        binding.contentMain.customButton.setOnClickListener {
+            val url = downloadFromSource()
+            if (url != null) {
+                download(url)
+                binding.contentMain.customButton.changeButtonState(ButtonState.Clicked)
+            }
+        }
+        createNotificationChannel(
+            getString(R.string.channel_id),
+            getString(R.string.channel_name)
+        )
     }
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+
+            binding.contentMain.customButton.changeButtonState(ButtonState.Loading)
+
+            if (downloadID == id) {
+                downloadNotification()
+                binding.contentMain.customButton.changeButtonState(ButtonState.Completed)
+            }
         }
     }
 
-    private fun download() {
+    private fun downloadNotification() {
+        notificationManager = ContextCompat.getSystemService(
+            this,
+            NotificationManager::class.java
+        ) as NotificationManager
+
+        notificationManager.cancelAll()
+//        notificationManager.sendNotification(
+//            when (URL) {
+//                GLIDE -> "Glide"
+//                LOADAPP -> "Udacity File"
+//                else -> "Retrofit"
+//            }, this
+//        )
+    }
+
+    private fun downloadFromSource(): String? {
+        return when (binding.contentMain.group.checkedRadioButtonId) {
+            binding.contentMain.glide.id -> GLIDE
+
+            binding.contentMain.c3.id -> LOADAPP
+
+            binding.contentMain.retrofit.id -> RETROFIT
+
+            else -> {
+                Toast.makeText(
+                    this,
+                    getString(R.string.please_select_file),
+                    Toast.LENGTH_SHORT
+                ).show()
+                null
+            }
+        }
+    }
+
+    private fun download(url: String) {
+        URL = url
+
         val request =
-            DownloadManager.Request(Uri.parse(URL))
+            DownloadManager.Request(Uri.parse(url))
                 .setTitle(getString(R.string.app_name))
                 .setDescription(getString(R.string.app_description))
                 .setRequiresCharging(false)
@@ -53,13 +114,24 @@ class MainActivity : AppCompatActivity() {
                 .setAllowedOverRoaming(true)
 
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+
         downloadID =
             downloadManager.enqueue(request)// enqueue puts the download request in the queue.
     }
 
-    companion object {
-        private const val URL =
-            "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
-        private const val CHANNEL_ID = "channelId"
+    private fun createNotificationChannel(channelID: String, channelName: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                channelID,
+                channelName,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            notificationChannel.enableVibration(true)
+            notificationChannel.description = getString(R.string.notification_description)
+            val notificationManger = this.getSystemService(
+                NotificationManager::class.java
+            )
+            notificationManger.createNotificationChannel(notificationChannel)
+        }
     }
 }
