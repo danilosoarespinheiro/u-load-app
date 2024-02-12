@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-
+        binding.toolbar.title = getString(R.string.app_name)
         customButton = binding.contentMain.customButton
         contentMain = binding.contentMain
         requestPermissionLauncher =
