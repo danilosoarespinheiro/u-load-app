@@ -14,7 +14,7 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.LinearInterpolator
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.*
 import kotlin.properties.Delegates
 
 class LoadingButton @JvmOverloads constructor(
@@ -82,12 +82,12 @@ class LoadingButton @JvmOverloads constructor(
             try {
                 btnColor = getColor(
                     R.styleable.LoadingButton_buttonBackgroundColor,
-                    ContextCompat.getColor(context, R.color.colorPrimary)
+                    getColor(context, R.color.colorPrimary)
                 )
 
                 btnTxtColor = getColor(
                     R.styleable.LoadingButton_buttonTextColor,
-                    ContextCompat.getColor(context, R.color.white)
+                    getColor(context, R.color.white)
                 )
             } finally {
                 recycle()
@@ -107,10 +107,10 @@ class LoadingButton @JvmOverloads constructor(
         canvas?.drawRect(0f, 0f, widthSize.toFloat(), heightSize.toFloat(), paint)
 
         if (download) {
-            paint.color = ContextCompat.getColor(context, R.color.colorPrimaryDark)
+            paint.color = getColor(context, R.color.colorPrimaryDark)
             canvas?.drawRect(0f, 0f, currentWidth.toFloat(), heightSize.toFloat(), paint)
 
-            paint.color = ContextCompat.getColor(context, R.color.colorAccent)
+            paint.color = getColor(context, R.color.colorAccent)
             canvas?.drawArc(circle, -90f, currentDegree.toFloat(), true, paint)
         }
 
@@ -130,8 +130,8 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val minw: Int = paddingLeft + paddingRight + suggestedMinimumWidth
-        val w: Int = resolveSizeAndState(minw, widthMeasureSpec, 1)
+        val minWidth: Int = paddingLeft + paddingRight + suggestedMinimumWidth
+        val w: Int = resolveSizeAndState(minWidth, widthMeasureSpec, 1)
         val h: Int = resolveSizeAndState(MeasureSpec.getSize(w), heightMeasureSpec, 0)
         widthSize = w
         heightSize = h

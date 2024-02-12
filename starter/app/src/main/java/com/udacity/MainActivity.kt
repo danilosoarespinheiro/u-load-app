@@ -21,7 +21,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.*
 import com.udacity.databinding.ActivityMainBinding
+import com.udacity.databinding.ContentMainBinding
 
+@Suppress("PrivatePropertyName")
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -29,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     private var downloadID: Long = 0
     private lateinit var notificationManager: NotificationManager
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var customButton: LoadingButton
+    private lateinit var contentMain: ContentMainBinding
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -38,14 +42,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
+        customButton = binding.contentMain.customButton
+        contentMain = binding.contentMain
         requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
                 if (!it) {
                     makeText(this, getString(R.string.please_grant_permission), LENGTH_SHORT).show()
-                } else binding.contentMain.customButton.callOnClick()
+                } else customButton.callOnClick()
             }
 
-        binding.contentMain.customButton.setOnClickListener {
+        customButton.setOnClickListener {
             val url = downloadFromSource()
             if (url != null) download(url)
         }
@@ -56,11 +62,11 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
 
-            binding.contentMain.customButton.changeButtonState(ButtonState.Loading)
+            customButton.changeButtonState(ButtonState.Loading)
 
             if (downloadID == id) {
                 downloadNotification()
-                binding.contentMain.customButton.changeButtonState(ButtonState.Completed)
+                customButton.changeButtonState(ButtonState.Completed)
             }
         }
     }
@@ -82,14 +88,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadFromSource(): String? {
-        return when (binding.contentMain.group.checkedRadioButtonId) {
-
-            binding.contentMain.glide.id -> GLIDE
-
-            binding.contentMain.c3.id -> LOAD_APP
-
-            binding.contentMain.retrofit.id -> RETROFIT
-
+        return when (contentMain.group.checkedRadioButtonId) {
+            contentMain.glide.id -> GLIDE
+            contentMain.c3.id -> LOAD_APP
+            contentMain.retrofit.id -> RETROFIT
             else -> {
                 makeText(this, getString(R.string.please_select_file), LENGTH_SHORT).show()
                 null
@@ -104,7 +106,7 @@ class MainActivity : AppCompatActivity() {
                 permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            binding.contentMain.customButton.changeButtonState(ButtonState.Clicked)
+            customButton.changeButtonState(ButtonState.Clicked)
             URL = url
             val request =
                 DownloadManager.Request(Uri.parse(url))

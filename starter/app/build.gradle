@@ -48,7 +48,9 @@ def version_espresso = "3.5.1"
 dependencies {
     //noinspection GradleDependency
     implementation "androidx.core:core-ktx:$version_core"
+    //noinspection GradleDependency
     implementation "androidx.appcompat:appcompat:$version_app_compat"
+    //noinspection GradleDependency
     implementation "com.google.android.material:material:$version_material"
     implementation "androidx.constraintlayout:constraintlayout:$version_constraint"
 
