@@ -1,5 +1,6 @@
 package com.udacity
 
+import android.Manifest.*
 import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.app.NotificationChannel
@@ -9,12 +10,16 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast.*
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.*
 import com.udacity.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -23,7 +28,9 @@ class MainActivity : AppCompatActivity() {
     private var URL = ""
     private var downloadID: Long = 0
     private lateinit var notificationManager: NotificationManager
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,12 +38,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
+        requestPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                if (!it) {
+                    makeText(this, getString(R.string.please_grant_permission), LENGTH_SHORT).show()
+                } else binding.contentMain.customButton.callOnClick()
+            }
+
         binding.contentMain.customButton.setOnClickListener {
             val url = downloadFromSource()
-            if (url != null) {
-                download(url)
-                binding.contentMain.customButton.changeButtonState(ButtonState.Clicked)
-            }
+            if (url != null) download(url)
         }
         createNotificationChannel(getString(R.string.channel_id), getString(R.string.channel_name))
     }
@@ -55,7 +66,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadNotification() {
-        notificationManager = ContextCompat.getSystemService(
+        notificationManager = getSystemService(
             this,
             NotificationManager::class.java
         ) as NotificationManager
@@ -86,19 +97,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun download(url: String) {
-        URL = url
+        if (checkSelfPermission(
+                this,
+                permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            binding.contentMain.customButton.changeButtonState(ButtonState.Clicked)
+            URL = url
+            val request =
+                DownloadManager.Request(Uri.parse(url))
+                    .setTitle(getString(R.string.app_name))
+                    .setDescription(getString(R.string.app_description))
+                    .setRequiresCharging(false)
+                    .setAllowedOverMetered(true)
+                    .setAllowedOverRoaming(true)
 
-        val request =
-            DownloadManager.Request(Uri.parse(url))
-                .setTitle(getString(R.string.app_name))
-                .setDescription(getString(R.string.app_description))
-                .setRequiresCharging(false)
-                .setAllowedOverMetered(true)
-                .setAllowedOverRoaming(true)
-
-        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-        downloadID = downloadManager.enqueue(request)
+            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+            downloadID = downloadManager.enqueue(request)
+        } else requestPermissionLauncher.launch(permission.POST_NOTIFICATIONS)
     }
 
     private fun createNotificationChannel(channelID: String, channelName: String) {

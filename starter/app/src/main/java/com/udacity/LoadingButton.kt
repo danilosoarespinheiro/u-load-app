@@ -2,6 +2,7 @@ package com.udacity
 
 import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
+import android.animation.ValueAnimator.*
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -106,10 +107,10 @@ class LoadingButton @JvmOverloads constructor(
         canvas?.drawRect(0f, 0f, widthSize.toFloat(), heightSize.toFloat(), paint)
 
         if (download) {
-            paint.color = resources.getColor(R.color.colorPrimaryDark)
+            paint.color = ContextCompat.getColor(context, R.color.colorPrimaryDark)
             canvas?.drawRect(0f, 0f, currentWidth.toFloat(), heightSize.toFloat(), paint)
 
-            paint.color = resources.getColor(R.color.colorAccent)
+            paint.color = ContextCompat.getColor(context, R.color.colorAccent)
             canvas?.drawArc(circle, -90f, currentDegree.toFloat(), true, paint)
         }
 
@@ -138,22 +139,23 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     private fun loadAnimation() {
-        valueAnimator.setValues(
-            PropertyValuesHolder.ofInt("rect", 0, widthSize),
-            PropertyValuesHolder.ofInt("arc", 0, 360)
-        )
+        valueAnimator.apply {
+            setValues(
+                PropertyValuesHolder.ofInt("rect", 0, widthSize),
+                PropertyValuesHolder.ofInt("arc", 0, 360)
+            )
 
-        valueAnimator.interpolator = LinearInterpolator()
-        valueAnimator.duration = 1500
+            interpolator = LinearInterpolator()
+            duration = 1500
+            repeatCount = INFINITE
+            repeatMode = RESTART
 
-        valueAnimator.repeatCount = ValueAnimator.INFINITE
-        valueAnimator.repeatMode = ValueAnimator.RESTART
-
-        valueAnimator.addUpdateListener {
-            currentWidth = it.getAnimatedValue("rect") as Int
-            currentDegree = it.getAnimatedValue("arc") as Int
-            invalidate()
+            addUpdateListener {
+                currentWidth = it.getAnimatedValue("rect") as Int
+                currentDegree = it.getAnimatedValue("arc") as Int
+                invalidate()
+            }
+            start()
         }
-        valueAnimator.start()
     }
 }

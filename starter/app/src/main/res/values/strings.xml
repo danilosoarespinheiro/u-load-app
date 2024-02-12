@@ -28,4 +28,5 @@
     <string name="status">Status</string>
     <string name="file_resource">File : %s</string>
     <string name="status_resource">Status : %s</string>
+    <string name="please_grant_permission">Please grant Notification permission from App Settings</string>
 </resources>
