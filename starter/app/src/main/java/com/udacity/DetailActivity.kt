@@ -13,5 +13,16 @@ class DetailActivity : AppCompatActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+
+        val intent = intent
+        val fileName = intent.getStringExtra("FILE")
+        val status = intent.getStringExtra("STATUS")
+
+        binding.contentDetail.fileNameTextView.text = "File: ${fileName}"
+        binding.contentDetail.statusTextView.text = "Status: ${status}"
+
+        binding.contentDetail.detailLayout.transitionToEnd()
+
+        binding.contentDetail.backButton.setOnClickListener { finish() }
     }
 }

@@ -1,5 +1,6 @@
 package com.udacity
 
+import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -35,9 +36,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var notificationManager: NotificationManager
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
@@ -74,13 +76,13 @@ class MainActivity : AppCompatActivity() {
         ) as NotificationManager
 
         notificationManager.cancelAll()
-//        notificationManager.sendNotification(
-//            when (URL) {
-//                GLIDE -> "Glide"
-//                LOADAPP -> "Udacity File"
-//                else -> "Retrofit"
-//            }, this
-//        )
+        notificationManager.sendNotification(
+            when (URL) {
+                GLIDE -> "Glide"
+                LOADAPP -> "Udacity File"
+                else -> "Retrofit"
+            }, this
+        )
     }
 
     private fun downloadFromSource(): String? {

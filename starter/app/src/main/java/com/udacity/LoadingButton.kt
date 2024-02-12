@@ -14,14 +14,12 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.animation.LinearInterpolator
 import androidx.core.content.ContextCompat
-import com.udacity.databinding.ActivityMainBinding
 import kotlin.properties.Delegates
 
 class LoadingButton @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private lateinit var binding: ActivityMainBinding
 
     //  The Size of the button
     private var widthSize = 0
@@ -60,12 +58,12 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     private var buttonState: ButtonState
-            by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
+            by Delegates.observable(ButtonState.Completed) { _, _, new ->
                 when (new) {
                     ButtonState.Clicked -> {
                         loadAnimation()
                         download = true
-                        binding.contentMain.customButton.isClickable = false
+
                         btnTxt = context.getString(R.string.downloading)
                     }
 
@@ -80,7 +78,7 @@ class LoadingButton @JvmOverloads constructor(
                     ButtonState.Completed -> {
                         valueAnimator.end()
                         download = false
-                        binding.contentMain.customButton.isClickable = true
+
                         btnTxt = context.getString(R.string.download)
                         invalidate()
                     }
@@ -89,6 +87,7 @@ class LoadingButton @JvmOverloads constructor(
 
 
     init {
+//        binding = ContentMainBinding.inflate(LayoutInflater.from(context))
         context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.LoadingButton,
