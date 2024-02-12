@@ -7,7 +7,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.core.app.NotificationCompat
 
-private val NOTIFICATION_ID = 1
+private const val NOTIFICATION_ID = 1
 
 fun NotificationManager.sendNotification(body: String, applicationContext: Context) {
 
@@ -19,7 +19,7 @@ fun NotificationManager.sendNotification(body: String, applicationContext: Conte
         applicationContext,
         NOTIFICATION_ID,
         intent,
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
     val icoImg = BitmapFactory.decodeResource(
@@ -36,9 +36,7 @@ fun NotificationManager.sendNotification(body: String, applicationContext: Conte
         applicationContext.getString(R.string.channel_id)
     )
         .setSmallIcon(R.drawable.ic_assistant_black_24dp)
-        .setContentTitle(
-            applicationContext.getString(R.string.notification_title)
-        )
+        .setContentTitle(applicationContext.getString(R.string.notification_title))
         .setContentText(body)
         .setAutoCancel(true)
         .setStyle(bigImg)

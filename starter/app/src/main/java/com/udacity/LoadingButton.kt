@@ -20,7 +20,6 @@ class LoadingButton @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-
     //  The Size of the button
     private var widthSize = 0
     private var heightSize = 0
@@ -38,12 +37,10 @@ class LoadingButton @JvmOverloads constructor(
 
     private var btnTxt = "Donwload"
 
-    private val path = Path()
-
     // To check if the download started or not
     private var download = false
 
-    var circle = RectF(
+    private var circle = RectF(
         0f,
         0f,
         0f,
@@ -63,13 +60,11 @@ class LoadingButton @JvmOverloads constructor(
                     ButtonState.Clicked -> {
                         loadAnimation()
                         download = true
-
                         btnTxt = context.getString(R.string.downloading)
                     }
 
                     ButtonState.Loading -> {
                         if (valueAnimator.isPaused) valueAnimator.resume()
-
                         download = true
                         btnTxt = context.getString(R.string.please_wait)
                         invalidate()
@@ -78,7 +73,6 @@ class LoadingButton @JvmOverloads constructor(
                     ButtonState.Completed -> {
                         valueAnimator.end()
                         download = false
-
                         btnTxt = context.getString(R.string.download)
                         invalidate()
                     }
@@ -87,7 +81,6 @@ class LoadingButton @JvmOverloads constructor(
 
 
     init {
-//        binding = ContentMainBinding.inflate(LayoutInflater.from(context))
         context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.LoadingButton,
@@ -110,7 +103,6 @@ class LoadingButton @JvmOverloads constructor(
                         R.color.white
                     )
                 )
-
             } finally {
                 recycle()
             }
@@ -118,9 +110,7 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     fun changeButtonState(buttonState: ButtonState) {
-        (context as Activity).runOnUiThread {
-            this.buttonState = buttonState
-        }
+        (context as Activity).runOnUiThread { this.buttonState = buttonState }
     }
 
     @SuppressLint("DrawAllocation")
@@ -147,14 +137,7 @@ class LoadingButton @JvmOverloads constructor(
             )
 
             paint.color = resources.getColor(R.color.colorAccent)
-
-            canvas?.drawArc(
-                circle,
-                -90f,
-                currentDegree.toFloat(),
-                true,
-                paint
-            )
+            canvas?.drawArc(circle, -90f, currentDegree.toFloat(), true, paint)
         }
 
         paint.color = btnTxtColor
@@ -174,22 +157,13 @@ class LoadingButton @JvmOverloads constructor(
         val top = newHeight / 2 - 35f
         val bottom = top + 70
 
-        circle = RectF(
-            left,
-            top,
-            right,
-            bottom
-        )
+        circle = RectF(left, top, right, bottom)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val minw: Int = paddingLeft + paddingRight + suggestedMinimumWidth
         val w: Int = resolveSizeAndState(minw, widthMeasureSpec, 1)
-        val h: Int = resolveSizeAndState(
-            MeasureSpec.getSize(w),
-            heightMeasureSpec,
-            0
-        )
+        val h: Int = resolveSizeAndState(MeasureSpec.getSize(w), heightMeasureSpec, 0)
         widthSize = w
         heightSize = h
         setMeasuredDimension(w, h)
@@ -197,14 +171,8 @@ class LoadingButton @JvmOverloads constructor(
 
     private fun loadAnimation() {
         valueAnimator.setValues(
-            PropertyValuesHolder.ofInt(
-                "rect",
-                0, widthSize
-            ),
-            PropertyValuesHolder.ofInt(
-                "arc",
-                0, 360
-            )
+            PropertyValuesHolder.ofInt("rect", 0, widthSize),
+            PropertyValuesHolder.ofInt("arc", 0, 360)
         )
 
         valueAnimator.interpolator = LinearInterpolator()

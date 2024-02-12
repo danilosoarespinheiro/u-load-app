@@ -35,7 +35,7 @@
             android:id="@+id/glide"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="@string/glid" />
+            android:text="@string/glide" />
 
         <RadioButton
             android:id="@+id/c3"

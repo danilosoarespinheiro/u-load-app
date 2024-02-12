@@ -11,7 +11,6 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -19,19 +18,9 @@ import com.udacity.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        private const val LOADAPP =
-            "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter"
-        private const val GLIDE =
-            "https://github.com/bumptech/glide"
-        private const val RETROFIT =
-            "https://github.com/square/retrofit"
-    }
-
     private lateinit var binding: ActivityMainBinding
 
     private var URL = ""
-
     private var downloadID: Long = 0
 
     private lateinit var notificationManager: NotificationManager
@@ -50,10 +39,7 @@ class MainActivity : AppCompatActivity() {
                 binding.contentMain.customButton.changeButtonState(ButtonState.Clicked)
             }
         }
-        createNotificationChannel(
-            getString(R.string.channel_id),
-            getString(R.string.channel_name)
-        )
+        createNotificationChannel(getString(R.string.channel_id), getString(R.string.channel_name))
     }
 
     private val receiver = object : BroadcastReceiver() {
@@ -94,11 +80,8 @@ class MainActivity : AppCompatActivity() {
             binding.contentMain.retrofit.id -> RETROFIT
 
             else -> {
-                Toast.makeText(
-                    this,
-                    getString(R.string.please_select_file),
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, getString(R.string.please_select_file), Toast.LENGTH_SHORT)
+                    .show()
                 null
             }
         }
@@ -117,8 +100,7 @@ class MainActivity : AppCompatActivity() {
 
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
 
-        downloadID =
-            downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+        downloadID = downloadManager.enqueue(request)
     }
 
     private fun createNotificationChannel(channelID: String, channelName: String) {
@@ -130,9 +112,7 @@ class MainActivity : AppCompatActivity() {
             )
             notificationChannel.enableVibration(true)
             notificationChannel.description = getString(R.string.notification_description)
-            val notificationManger = this.getSystemService(
-                NotificationManager::class.java
-            )
+            val notificationManger = this.getSystemService(NotificationManager::class.java)
             notificationManger.createNotificationChannel(notificationChannel)
         }
     }
