@@ -17,7 +17,6 @@ class DetailActivity : AppCompatActivity() {
         binding.contentDetail.apply {
             fileNameTextView.text = getString(R.string.file_resource, intent.getStringExtra(FILE))
             statusTextView.text = getString(R.string.status_resource, intent.getStringExtra(STATUS))
-            detailLayout.transitionToEnd()
             backButton.setOnClickListener { finish() }
         }
     }
