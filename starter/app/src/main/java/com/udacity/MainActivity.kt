@@ -101,24 +101,30 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun download(url: String) {
-        if (checkSelfPermission(
-                this,
-                permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            customButton.changeButtonState(ButtonState.Clicked)
-            URL = url
-            val request =
-                DownloadManager.Request(Uri.parse(url))
-                    .setTitle(getString(R.string.app_name))
-                    .setDescription(getString(R.string.app_description))
-                    .setRequiresCharging(false)
-                    .setAllowedOverMetered(true)
-                    .setAllowedOverRoaming(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(
+                    this,
+                    permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                downloadHandler(url)
+            } else requestPermissionLauncher.launch(permission.POST_NOTIFICATIONS)
+        } else downloadHandler(url)
+    }
 
-            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-            downloadID = downloadManager.enqueue(request)
-        } else requestPermissionLauncher.launch(permission.POST_NOTIFICATIONS)
+    private fun downloadHandler(url: String) {
+        customButton.changeButtonState(ButtonState.Clicked)
+        URL = url
+        val request =
+            DownloadManager.Request(Uri.parse(url))
+                .setTitle(getString(R.string.app_name))
+                .setDescription(getString(R.string.app_description))
+                .setRequiresCharging(false)
+                .setAllowedOverMetered(true)
+                .setAllowedOverRoaming(true)
+
+        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+        downloadID = downloadManager.enqueue(request)
     }
 
     private fun createNotificationChannel(channelID: String, channelName: String) {
