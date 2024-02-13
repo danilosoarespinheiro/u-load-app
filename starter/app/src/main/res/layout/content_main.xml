@@ -55,6 +55,8 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/custom_button_height"
         android:layout_margin="@dimen/medium_margin"
+        app:buttonBackgroundColor="@color/colorPrimary"
+        app:buttonTextColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

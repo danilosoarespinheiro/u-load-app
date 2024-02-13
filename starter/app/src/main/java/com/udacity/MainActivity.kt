@@ -10,7 +10,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
+import android.content.pm.PackageManager.*
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -102,11 +102,7 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun download(url: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (checkSelfPermission(
-                    this,
-                    permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
+            if (checkSelfPermission(this, permission.POST_NOTIFICATIONS) == PERMISSION_GRANTED) {
                 downloadHandler(url)
             } else requestPermissionLauncher.launch(permission.POST_NOTIFICATIONS)
         } else downloadHandler(url)
